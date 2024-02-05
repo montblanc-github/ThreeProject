@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tp.threeproject.infrastructure.mapper.TaskMapper">
+
+	<!-- 一覧を取得します。 -->
+	<select id="selectAll" resultType="com.tp.threeproject.infrastructure.entity.Task">
+		SELECT
+			ID
+			,TITLE
+			,MEMO
+			,DONE_FLG
+			,TIME_LIMIT
+			,DATE_TRUNC('minute',CREATE_TIMESTAMP) AS CREATE_TIMESTAMP
+			,CREATED_BY
+			,DATE_TRUNC('minute',UPDATE_TIMESTAMP) AS UPDATE_TIMESTAMP
+			,UPDATED_BY
+		FROM
+			TASK
+		ORDER BY
+			DONE_FLG ASC
+			,TIME_LIMIT ASC
+	</select>
+
+	<!-- 主キーからタスク情報を取得します。 -->
+	<select id="selectByPk" parameterType="java.lang.Long" resultType="com.tp.threeproject.infrastructure.entity.Task">
+		SELECT
+			ID
+			,TITLE
+			,MEMO
+			,DONE_FLG
+			,TIME_LIMIT
+			,DATE_TRUNC('minute',CREATE_TIMESTAMP) AS CREATE_TIMESTAMP
+			,CREATED_BY
+			,DATE_TRUNC('minute',UPDATE_TIMESTAMP) AS UPDATE_TIMESTAMP
+			,UPDATED_BY
+		FROM
+			TASK
+		WHERE
+			ID = #{id, jdbcType=BIGINT}
+	</select>
+
+	<!-- タスクを新規登録します。 -->
+	<insert id="insert" parameterType="com.tp.threeproject.infrastructure.entity.Task">
+		INSERT INTO TASK
+		(
+			TITLE
+			,MEMO
+			,DONE_FLG
+			,TIME_LIMIT
+			,CREATE_TIMESTAMP
+			,CREATED_BY
+			,UPDATE_TIMESTAMP
+			,UPDATED_BY
+		)
+		VALUES (
+			#{title, jdbcType=VARCHAR}
+			,#{memo, jdbcType=VARCHAR}
+			,#{doneFlg, jdbcType=VARCHAR}
+			,#{timeLimit, jdbcType=DATE}
+			,CURRENT_TIMESTAMP
+			,'taskAddUser'
+			,CURRENT_TIMESTAMP
+			,'taskAddUser'
+		)
+	</insert>
+
+	<!-- 主キーからタスク情報を更新します。 -->
+	<update id="updateDetail" parameterType="com.tp.threeproject.infrastructure.entity.Task">
+		UPDATE
+			TASK
+		SET
+			TITLE = #{title, jdbcType=VARCHAR}
+			,MEMO = #{memo, jdbcType=VARCHAR}
+			,DONE_FLG = #{doneFlg, jdbcType=VARCHAR}
+			,TIME_LIMIT = #{timeLimit, jdbcType=DATE}
+			,UPDATE_TIMESTAMP = CURRENT_TIMESTAMP
+			,UPDATED_BY = 'taskUpdateUser'
+		WHERE
+			ID = #{id, jdbcType=BIGINT}
+	</update>
+
+	<!-- 主キーからを完了フラグを更新します。 -->
+	<update id="updateDoneFlg" parameterType="com.tp.threeproject.domain.dto.UpdateDoneFlgDto">
+		UPDATE
+			TASK
+		SET
+			DONE_FLG = #{doneFlg, jdbcType=VARCHAR}
+		WHERE
+			ID = #{id, jdbcType=BIGINT}
+	</update>
+
+	<!-- 主キーからタスクを削除します。 -->
+	<delete id="deleteByPk" parameterType="java.lang.Long">
+		DELETE FROM
+			TASK
+		WHERE
+			ID = #{id, jdbcType=BIGINT}
+	</delete>
+</mapper>
